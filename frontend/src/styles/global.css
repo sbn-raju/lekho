@@ -1,0 +1,27 @@
+/* Brand tokens as CSS variables (--lekho-*) for any hand-written CSS. */
+@import '../brand/tokens/lekho.tokens.css';
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background-color: var(--lekho-background);
+  color: var(--lekho-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Self-hosted variable fonts are registered by @fontsource-variable. */
+:root {
+  --lekho-font-heading: 'Manrope Variable', Manrope, 'Inter Variable', Inter, sans-serif;
+  --lekho-font-body: 'Inter Variable', Inter, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Tabular figures for numbers in tables and stat tiles. */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}

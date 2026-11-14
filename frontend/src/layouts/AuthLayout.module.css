@@ -1,0 +1,25 @@
+.root {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr;
+
+  @media (min-width: $mantine-breakpoint-md) {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+}
+
+.brandPanel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  /* Navy surface so the dark-background logo variant has proper contrast. */
+  background:
+    radial-gradient(circle at 85% 15%, rgb(37 99 235 / 35%) 0%, transparent 55%),
+    var(--lekho-text);
+}
+
+.formPanel {
+  padding: 32px 16px;
+  background-color: var(--lekho-surface);
+}

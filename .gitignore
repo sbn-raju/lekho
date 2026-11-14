@@ -1,0 +1,19 @@
+# Dependencies & build
+node_modules/
+dist/
+dist-ssr/
+*.log
+
+# Env (never commit)
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+.idea/
+
+# AI agent tooling
+.agents/
+.claude/
+CLAUDE.md
+skills-lock.json

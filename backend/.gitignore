@@ -1,0 +1,24 @@
+# Dependencies & build
+node_modules
+dist
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Env (never commit)
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# AI agent tooling
+.agents/
+.claude/
+CLAUDE.md
+skills-lock.json

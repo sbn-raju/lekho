@@ -1,0 +1,24 @@
+/* Proportions derived from logos/lekho-primary.svg (symbol box 187×140, text 92px). */
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--logo-size) * 0.08);
+  line-height: 1;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.symbol {
+  display: block;
+  height: var(--logo-size);
+  width: calc(var(--logo-size) * 4 / 3); /* master viewBox is 240×180 */
+}
+
+.wordmark {
+  font-family: var(--lekho-font-heading);
+  font-weight: 800;
+  font-size: calc(var(--logo-size) * 0.72);
+  letter-spacing: -0.043em;
+  color: var(--logo-wordmark-color);
+  white-space: nowrap;
+}

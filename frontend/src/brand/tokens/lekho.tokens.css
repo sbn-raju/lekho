@@ -1,0 +1,32 @@
+:root {
+  /* Lekho brand */
+  --lekho-primary: #2563EB;
+  --lekho-primary-light: #3B82F6;
+  --lekho-primary-tint: #DBEAFE;
+  --lekho-primary-dark: #1746C8;
+  --lekho-accent: #F59E0B;
+
+  /* Surfaces and text */
+  --lekho-background: #F8FAFC;
+  --lekho-surface: #FFFFFF;
+  --lekho-text: #0B1736;
+  --lekho-text-muted: #64748B;
+  --lekho-border: #E2E8F0;
+
+  /* Semantic states */
+  --lekho-success: #10B981;
+  --lekho-error: #EF4444;
+  --lekho-info: #0EA5E9;
+  --lekho-draft: #8B5CF6;
+  --lekho-neutral: #64748B;
+  --lekho-warning: #F59E0B;
+
+  /* Typography and geometry */
+  --lekho-font-heading: "Manrope", Inter, sans-serif;
+  --lekho-font-body: Inter, "Helvetica Neue", Arial, sans-serif;
+  --lekho-radius-sm: 6px;
+  --lekho-radius-md: 10px;
+  --lekho-radius-lg: 14px;
+  --lekho-radius-xl: 20px;
+  --lekho-shadow-card: 0 1px 3px rgb(15 23 42 / 8%), 0 8px 24px rgb(15 23 42 / 4%);
+}

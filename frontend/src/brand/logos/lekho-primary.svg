@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 190" role="img" aria-labelledby="title">
+<title id="title">Lekho logo</title>
+<defs><linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#3B82F6"/><stop offset="1" stop-color="#1746C8"/></linearGradient></defs>
+<g transform="translate(0 5) scale(.78)">
+<path d="M22 35 Q22 25 34 25 H91 Q111 25 120 42 Q129 25 149 25 H206 Q218 25 218 37 V135 Q218 144 207 144 H151 Q130 144 120 160 Q110 144 89 144 H33 Q22 144 22 133Z" fill="url(#blue)"/>
+<path d="M120 42 V157" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+<path d="M39 43 H88 Q103 43 111 55 V128 Q101 117 87 117 H39Z" fill="#fff"/>
+<path d="M201 43 H152 Q137 43 129 55 V128 Q139 117 153 117 H201Z" fill="#fff"/>
+<path d="M158 45 H184 V82 L171 72 L158 82Z" fill="#F59E0B"/>
+<path d="M143 91 Q163 82 183 91 M143 105 Q163 96 183 105" fill="none" stroke="#2563EB" stroke-width="5" stroke-linecap="round"/>
+</g>
+<text x="205" y="119" font-family="Manrope, Inter, Arial, sans-serif" font-size="92" font-weight="800" letter-spacing="-4" fill="#0B1736">Lekho</text>
+</svg>
