@@ -1,0 +1,31 @@
+import { Router } from 'express';
+import healthRoutes from './modules/health/health.routes.js';
+import authRoutes from './modules/auth/auth.routes.js';
+import platformRoutes from './modules/platform/platform.routes.js';
+import organizationRoutes from './modules/organizations/organization.routes.js';
+import userRoutes from './modules/users/user.routes.js';
+import { membershipRouter, meRouter } from './modules/memberships/membership.routes.js';
+import invitationRoutes from './modules/invitations/invitation.routes.js';
+import roleRoutes from './modules/roles/role.routes.js';
+import permissionRoutes from './modules/permissions/permission.routes.js';
+import auditRoutes from './modules/audit/audit.routes.js';
+import { authorizationRouter } from './modules/authorization/authorization.routes.js';
+import organizationUnitRoutes from './modules/organization-units/organization-unit.routes.js';
+
+const router = Router();
+
+router.use('/health', healthRoutes);
+router.use('/auth', authRoutes);
+router.use('/platform', platformRoutes);
+router.use('/organizations', organizationRoutes);
+router.use('/users', userRoutes);
+router.use('/memberships', membershipRouter);
+router.use('/me', meRouter);
+router.use('/invitations', invitationRoutes);
+router.use('/roles', roleRoutes);
+router.use('/permissions', permissionRoutes);
+router.use('/authorization', authorizationRouter);
+router.use('/audit-logs', auditRoutes);
+router.use('/organization-units', organizationUnitRoutes);
+
+export default router;

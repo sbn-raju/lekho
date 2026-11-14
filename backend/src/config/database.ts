@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { env } from './env.js';
-import { logger } from '../utils/logger.js';
+import { logger } from '../common/utils/logger.js';
 
 export async function connectDatabase(): Promise<void> {
   mongoose.connection.on('connected', () => logger.info('MongoDB connected'));

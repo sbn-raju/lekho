@@ -7,20 +7,23 @@
  */
 const BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '/api/v1').replace(/\/$/, '');
 
-/** Mirrors backend/src/middlewares/error.middleware.ts */
+/** Mirrors backend/src/common/middleware/error.middleware.ts: { success: false, error: { code, message, details } } */
 export class ApiError extends Error {
   readonly status: number;
+  /** Machine-readable code, e.g. INVALID_CREDENTIALS, TOKEN_EXPIRED, FORBIDDEN. */
+  readonly code: string;
   readonly details?: unknown;
 
-  constructor(status: number, message: string, details?: unknown) {
+  constructor(status: number, code: string, message: string, details?: unknown) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
+    this.code = code;
     this.details = details;
   }
 }
 
-/** Mirrors backend/src/utils/apiResponse.ts */
+/** Mirrors backend/src/common/utils/apiResponse.ts */
 export interface ApiSuccess<T> {
   success: true;
   message: string;
@@ -43,7 +46,8 @@ async function request<T>(path: string, { body, headers, ...init }: RequestOptio
   const payload = res.status === 204 ? null : await res.json().catch(() => null);
 
   if (!res.ok) {
-    throw new ApiError(res.status, payload?.message ?? res.statusText, payload?.details);
+    const error = payload?.error;
+    throw new ApiError(res.status, error?.code ?? 'UNKNOWN', error?.message ?? res.statusText, error?.details);
   }
   return payload as T;
 }
