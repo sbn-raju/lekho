@@ -6,6 +6,7 @@ import type { RequestMeta } from '../../common/utils/request.js';
 import { auditService } from '../audit/audit.service.js';
 import { roleService } from '../roles/role.service.js';
 import { RoleModel } from '../roles/role.model.js';
+import { UserModel } from '../users/user.model.js';
 import { OrganizationModel, toPublicOrganization } from '../organizations/organization.model.js';
 import { InvitationModel } from '../invitations/invitation.model.js';
 import { sessionService } from '../sessions/session.service.js';
@@ -73,6 +74,26 @@ export const membershipService = {
       MembershipModel.countDocuments(filter),
     ]);
     return paginated(items.map(toPublicMembership), total, query);
+  },
+
+  /** Platform view of a school's members: memberships plus basic profile. */
+  async listWithUsers(organizationId: string, query: Pagination & { status?: MembershipStatus; roleId?: string; userId?: string }) {
+    const page = await this.list(organizationId, query);
+    const users = await UserModel.find({ _id: { $in: page.items.map((m) => m.userId) } }, { firstName: 1, lastName: 1, email: 1, status: 1 }).lean();
+    const byId = new Map(users.map((u) => [String(u._id), u]));
+    const roles = await RoleModel.find({ _id: { $in: page.items.flatMap((m) => m.roleIds) } }, { name: 1 }).lean();
+    const roleName = new Map(roles.map((r) => [String(r._id), r.name]));
+    return {
+      ...page,
+      items: page.items.map((m) => {
+        const u = byId.get(m.userId);
+        return {
+          ...m,
+          user: u ? { id: m.userId, firstName: u.firstName, lastName: u.lastName, email: u.email, status: u.status } : null,
+          roles: m.roleIds.map((id) => ({ id, name: roleName.get(id) ?? 'Unknown role' })),
+        };
+      }),
+    };
   },
 
   async get(organizationId: string, membershipId: string) {

@@ -8,7 +8,7 @@ const booleanString = z
 const envSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-    PORT: z.coerce.number().int().positive().default(5000),
+    PORT: z.coerce.number().int().positive().default(5050),
     MONGODB_URI: z.string().min(1, 'MONGODB_URI is required'),
     CORS_ORIGIN: z.string().default('*'),
     /** Express "trust proxy" setting; needed behind a load balancer so client IPs (rate limits, audit) are real. */

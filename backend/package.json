@@ -14,7 +14,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "iam:bootstrap-super-admin": "tsx src/bootstrap/super-admin.cli.ts",
-    "keys:generate": "tsx src/bootstrap/generate-jwt-keys.ts"
+    "keys:generate": "tsx src/bootstrap/generate-jwt-keys.ts",
+    "dev:memory": "tsx scripts/dev-memory.ts"
   },
   "dependencies": {
     "argon2": "^0.45.2",

@@ -1,12 +1,12 @@
 import { Card, Center, Stack, Text, ThemeIcon, Title } from '@mantine/core';
 import { useLocation } from 'react-router';
 import { PageHeader } from '@/components/PageHeader';
-import { ALL_NAV_ITEMS } from '@/config/navigation';
+import { MODULE_PLACEHOLDERS } from '@/config/navigation';
 
 /** Empty state used for modules that have a route but no screens yet. */
 export function ModulePlaceholderPage() {
   const { pathname } = useLocation();
-  const item = ALL_NAV_ITEMS.find((i) => i.path !== '/' && pathname.startsWith(i.path));
+  const item = MODULE_PLACEHOLDERS.find((i) => pathname.startsWith(i.path));
   const Icon = item?.icon;
   const title = item?.label ?? 'Module';
 

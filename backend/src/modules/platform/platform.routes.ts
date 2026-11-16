@@ -22,6 +22,7 @@ import {
 import { permissionService } from '../permissions/permission.service.js';
 import { auditQueryService, auditQuerySchema } from '../audit/audit-query.service.js';
 import { platformUserService } from './platform-user.service.js';
+import { platformDashboardService } from './platform-dashboard.service.js';
 import { createPlatformUserSchema, listPlatformUsersQuery, updatePlatformUserSchema } from './platform.validators.js';
 import {
   createOrganizationSchema,
@@ -43,6 +44,11 @@ const can = requirePermission;
  */
 const router = Router();
 router.use(authenticate);
+
+// ----- Dashboard (Super Admin console screen 1) -----
+router.get('/dashboard', can('organizations.read'), async (_req, res) => {
+  sendSuccess(res, await platformDashboardService.summary());
+});
 
 // ----- Organizations -----
 router.post('/organizations', can('organizations.create'), validate({ body: createOrganizationSchema }), async (req, res) => {
@@ -70,7 +76,7 @@ router.post('/organizations/:id/admin/resend-invitation', can('organizations.ass
 });
 router.get('/organizations/:id/memberships', can('organizations.read'), validate({ params: idParams, query: listMembershipsQuery }), async (req: Request<Id>, res) => {
   await organizationService.getForPlatform(req.params.id);
-  sendSuccess(res, await membershipService.list(req.params.id, req.query as never));
+  sendSuccess(res, await membershipService.listWithUsers(req.params.id, req.query as never));
 });
 
 // ----- Platform staff -----

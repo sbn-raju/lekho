@@ -342,3 +342,33 @@ describe('audit log APIs', () => {
     expect(orgIds.has(a.organizationId) && orgIds.has(b.organizationId)).toBe(true);
   });
 });
+
+describe('console support endpoints', () => {
+  it('platform dashboard counts organizations, users and staff', async () => {
+    const superToken = await superAdminToken();
+    await createActiveSchool(superToken);
+    await request(app).post(`${v1}/platform/organizations`).set(bearer(superToken)).send({ name: 'Draft School', slug: 'draft-school', code: 'DRF', contact: { email: 'd@s.test' } }).expect(201);
+    const res = await request(app).get(`${v1}/platform/dashboard`).set(bearer(superToken)).expect(200);
+    expect(res.body.data).toMatchObject({
+      organizations: { total: 2, active: 1, draft: 1, suspended: 0 },
+      pendingOnboarding: 1,
+      totalUsers: 2, // Super Admin + the school's admin
+      platformStaff: 0,
+    });
+  });
+
+  it('platform school-members list includes names and role names', async () => {
+    const superToken = await superAdminToken();
+    const { organizationId, adminEmail } = await createActiveSchool(superToken);
+    const res = await request(app).get(`${v1}/platform/organizations/${organizationId}/memberships`).set(bearer(superToken)).expect(200);
+    expect(res.body.data.items[0]).toMatchObject({ status: 'active', user: { email: adminEmail }, roles: [{ name: 'School Admin' }] });
+  });
+
+  it('permissions report whether they can be scoped', async () => {
+    const superToken = await superAdminToken();
+    const { adminToken } = await createActiveSchool(superToken);
+    const list = (await request(app).get(`${v1}/permissions`).set(bearer(adminToken)).expect(200)).body.data as { code: string; scopable: boolean }[];
+    expect(list.find((p) => p.code === 'users.read')).toMatchObject({ scopable: true, scopedResource: 'user' });
+    expect(list.find((p) => p.code === 'roles.read')).toMatchObject({ scopable: false, scopedResource: null });
+  });
+});

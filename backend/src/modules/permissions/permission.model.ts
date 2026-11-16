@@ -1,4 +1,5 @@
 import { Schema, model, type InferSchemaType } from 'mongoose';
+import { getPermissionDefinition } from './permission.catalog.js';
 
 /** Database mirror of PERMISSION_CATALOG (FRD §13.9). Written only by `permissionService.sync()`. */
 const permissionSchema = new Schema(
@@ -33,5 +34,8 @@ export function toPublicPermission(p: Permission & { _id: unknown }) {
     level: p.level,
     description: p.description ?? null,
     status: p.status,
+    /** true → can be narrowed by department/class/section/assigned/own/custom scopes. */
+    scopable: !!getPermissionDefinition(p.code)?.scopedResource,
+    scopedResource: getPermissionDefinition(p.code)?.scopedResource ?? null,
   };
 }

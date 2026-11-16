@@ -9,7 +9,7 @@ npm-debug.log*
 
 # Env (never commit)
 .env
-.env.*
+
 
 # OS / editor
 .DS_Store

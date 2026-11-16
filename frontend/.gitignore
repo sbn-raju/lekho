@@ -25,7 +25,6 @@ dist-ssr
 
 # Env (never commit)
 .env
-.env.*
 
 # AI agent tooling
 .agents/
