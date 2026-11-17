@@ -8,6 +8,10 @@ export const ORGANIZATION_UNIT_TYPES = ['department', 'academic', 'administratio
 export type OrganizationUnitType = (typeof ORGANIZATION_UNIT_TYPES)[number];
 
 export const DEFAULT_HIERARCHY_MAX_DEPTH = 6;
+
+/** Modules that own units. A managed unit's name, code, placement and status follow its owner. */
+export const UNIT_MANAGERS = ['academics'] as const;
+export type UnitManager = (typeof UNIT_MANAGERS)[number];
 export const MAX_HIERARCHY_DEPTH = 10;
 
 /**
@@ -30,6 +34,12 @@ const organizationUnitSchema = new Schema(
     depth: { type: Number, required: true, default: 1 },
     headUserIds: [{ type: Types.ObjectId, ref: 'User' }],
     status: { type: String, enum: ['active', 'inactive'], required: true, default: 'active' },
+    /**
+     * Set when another module owns this unit (classes and sections from the academics module).
+     * The hierarchy API can still assign members to it, but can't rename, move, deactivate or
+     * delete it, or create units inside it.
+     */
+    managedBy: { type: String, enum: UNIT_MANAGERS },
     createdBy: { type: Types.ObjectId, ref: 'User', required: true },
   },
   { timestamps: true, collection: 'organization_units' },
@@ -56,6 +66,7 @@ export function toPublicUnit(u: OrganizationUnit & { _id: unknown }, extra: Reco
     depth: u.depth,
     headUserIds: (u.headUserIds ?? []).map(String),
     status: u.status,
+    managedBy: u.managedBy ?? null,
     ...extra,
     createdAt: u.createdAt,
     updatedAt: u.updatedAt,

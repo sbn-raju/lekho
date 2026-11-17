@@ -6,6 +6,7 @@ import { EntityStatus } from '@/components/EntityStatus';
 import { PageHeader } from '@/components/PageHeader';
 import { StatCard } from '@/components/StatCard';
 import { useAccess, useAccessContext } from '@/services/api/access';
+import { useAcademicsOverview } from '@/services/api/academics';
 import { auditApi, useAuditLogs } from '@/services/api/audit';
 import { rolesApi, useRoles } from '@/services/api/roles';
 import { useInvitations, useSchool, useSchoolUsers, useUnits } from '@/services/api/school';
@@ -32,9 +33,12 @@ export function SchoolDashboardPage() {
   const roles = useRoles(rolesApi('organization'), access.canOrg('roles.read'));
   const units = useUnits(access.canOrg('organization_units.read'));
   const activity = useAuditLogs(schoolAudit, { page: 1, limit: 8 }, access.canOrg('audit_logs.read'));
+  const academics = useAcademicsOverview(undefined, access.canOrg('classes.read'));
   const [adding, add] = useDisclosure();
 
-  const isAdmin = canUsers || access.canOrg('roles.read');
+  const isAdmin = canUsers || access.canOrg('roles.read') || access.canOrg('classes.read');
+  const setup = academics.data;
+  const setupDone = setup?.checklist.filter((i) => i.done).length ?? 0;
   const activeRoles = roles.data?.filter((r) => r.status === 'active');
   const maxHolders = Math.max(1, ...(activeRoles ?? []).map((r) => r.userCount ?? 0));
   const myRoles = context.data?.organization?.roles ?? [];
@@ -65,6 +69,34 @@ export function SchoolDashboardPage() {
           </SimpleGrid>
 
           <Grid gap="md">
+            {setup && (
+              <Grid.Col span={12}>
+                <Card>
+                  <Group justify="space-between" align="flex-start" gap="md">
+                    <Stack gap={4}>
+                      <Title order={3} fz={18}>
+                        Academic setup{setup.academicYear && ` · ${setup.academicYear.name}`}
+                      </Title>
+                      <Text size="sm" c="dimmed" className="tabular-nums">
+                        {setup.totals.activeClasses} classes · {setup.totals.sections} sections · {setup.totals.totalCapacity.toLocaleString()} seats
+                        {setup.totals.sectionsWithoutClassTeacher > 0 && ` · ${setup.totals.sectionsWithoutClassTeacher} without a class teacher`}
+                      </Text>
+                    </Stack>
+                    <Anchor component={Link} to="/academics" size="sm">
+                      {setupDone === setup.checklist.length ? 'View classes & sections' : 'Continue setup'}
+                    </Anchor>
+                  </Group>
+                  {setupDone < setup.checklist.length && (
+                    <Stack gap={4} mt="md">
+                      <Progress value={(setupDone / setup.checklist.length) * 100} size="sm" aria-label="Academic setup progress" />
+                      <Text size="xs" c="dimmed">
+                        {setupDone} of {setup.checklist.length} steps done. Next: {setup.checklist.find((i) => !i.done)?.label.toLowerCase()}.
+                      </Text>
+                    </Stack>
+                  )}
+                </Card>
+              </Grid.Col>
+            )}
             {activeRoles && (
               <Grid.Col span={{ base: 12, lg: 6 }}>
                 <Card h="100%">

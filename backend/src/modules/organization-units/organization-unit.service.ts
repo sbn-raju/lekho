@@ -36,6 +36,17 @@ function assertPlacement(type: OrganizationUnitType, parent: UnitDoc | null) {
   if (parent?.type === 'section') throw ApiError.badRequest('Sections cannot contain other units.');
 }
 
+const MANAGED_MESSAGE: Record<string, string> = {
+  academics: 'This unit belongs to a class or section. Change it from Classes & sections instead.',
+};
+
+/** Units owned by another module can only be changed through that module. */
+function assertNotManaged(unit: { managedBy?: string | null }) {
+  if (unit.managedBy) {
+    throw new ApiError('CONFLICT', MANAGED_MESSAGE[unit.managedBy] ?? 'This unit is managed by another module.', { reason: 'managed_unit', managedBy: unit.managedBy });
+  }
+}
+
 async function maxDepth(organizationId: string): Promise<number> {
   const org = await OrganizationModel.findById(organizationId, { settings: 1 }).lean();
   return (org?.settings as { hierarchyMaxDepth?: number } | undefined)?.hierarchyMaxDepth ?? DEFAULT_HIERARCHY_MAX_DEPTH;
@@ -121,6 +132,7 @@ export const organizationUnitService = {
       await scopeService.assertResource(ctx.grants, 'organization_units.create', input.parentId, 'Parent unit not found');
       parent = (await findUnit(ctx.organizationId, input.parentId)).toObject() as UnitDoc;
       if (parent.status !== 'active') throw ApiError.badRequest('The parent unit is inactive.');
+      assertNotManaged(parent);
     } else {
       await assertOrgWide(ctx, 'organization_units.create');
     }
@@ -147,6 +159,7 @@ export const organizationUnitService = {
   async update(ctx: OrgActor, id: string, input: { name?: string; code?: string; description?: string | null; status?: 'active' | 'inactive' }) {
     await scopeService.assertResource(ctx.grants, 'organization_units.update', id, 'Organization unit not found');
     const unit = await findUnit(ctx.organizationId, id);
+    assertNotManaged(unit);
     const before = { name: unit.name, code: unit.code, status: unit.status };
     if (input.name !== undefined) unit.name = input.name;
     if (input.code !== undefined) unit.code = input.code;
@@ -166,6 +179,7 @@ export const organizationUnitService = {
     await inTransaction(async (session) => {
       const unit = await OrganizationUnitModel.findOne({ _id: id, organizationId: ctx.organizationId }).session(session);
       if (!unit) throw ApiError.notFound('Organization unit not found');
+      assertNotManaged(unit);
       let parent: UnitDoc | null = null;
       if (newParentId) {
         parent = (await OrganizationUnitModel.findOne({ _id: newParentId, organizationId: ctx.organizationId }).session(session).lean()) as UnitDoc | null;
@@ -173,6 +187,7 @@ export const organizationUnitService = {
         if (String(parent._id) === id || parent.ancestors.some((a) => String(a) === id)) {
           throw ApiError.badRequest('A unit cannot be moved inside itself.');
         }
+        assertNotManaged(parent);
       }
       assertPlacement(unit.type, parent);
 
@@ -220,6 +235,7 @@ export const organizationUnitService = {
   async remove(ctx: OrgActor, id: string) {
     await scopeService.assertResource(ctx.grants, 'organization_units.delete', id, 'Organization unit not found');
     const unit = await findUnit(ctx.organizationId, id);
+    assertNotManaged(unit);
     const [children, members, roles] = await Promise.all([
       OrganizationUnitModel.countDocuments({ organizationId: ctx.organizationId, parentId: unit._id }),
       MembershipModel.countDocuments({ organizationId: ctx.organizationId, organizationUnitIds: unit._id, status: { $ne: 'revoked' } }),

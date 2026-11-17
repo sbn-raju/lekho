@@ -40,7 +40,7 @@ describe('permission catalog', () => {
     expect(org.body.data.map((p: { code: string }) => p.code)).toContain('users.create');
 
     const modules = await request(app).get(`${v1}/permissions/modules`).set(bearer(adminToken)).expect(200);
-    expect(modules.body.data.map((m: { code: string }) => m.code)).toEqual(['users', 'roles', 'organization_units', 'settings', 'audit_logs']);
+    expect(modules.body.data.map((m: { code: string }) => m.code)).toEqual(['users', 'roles', 'organization_units', 'academics', 'settings', 'audit_logs']);
 
     const platform = await request(app).get(`${v1}/platform/permissions`).set(bearer(superToken)).expect(200);
     expect(platform.body.data.every((p: { level: string }) => p.level === 'platform')).toBe(true);

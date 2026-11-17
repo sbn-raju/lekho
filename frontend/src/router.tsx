@@ -14,6 +14,10 @@ const ResetPasswordPage = lazy(() => import('@/modules/auth/ResetPasswordPage').
 const SelectOrganizationPage = lazy(() => import('@/modules/auth/SelectOrganizationPage').then((m) => ({ default: m.SelectOrganizationPage })));
 const SignInPage = lazy(() => import('@/modules/auth/SignInPage').then((m) => ({ default: m.SignInPage })));
 const VerifyEmailPage = lazy(() => import('@/modules/auth/VerifyEmailPage').then((m) => ({ default: m.VerifyEmailPage })));
+const AcademicsOverviewPage = lazy(() => import('@/modules/academics/AcademicsOverviewPage').then((m) => ({ default: m.AcademicsOverviewPage })));
+const AcademicYearsPage = lazy(() => import('@/modules/academics/AcademicYearsPage').then((m) => ({ default: m.AcademicYearsPage })));
+const ClassesPage = lazy(() => import('@/modules/academics/ClassesPage').then((m) => ({ default: m.ClassesPage })));
+const ClassDetailPage = lazy(() => import('@/modules/academics/ClassDetailPage').then((m) => ({ default: m.ClassDetailPage })));
 const HierarchyPage = lazy(() => import('@/modules/organization/HierarchyPage').then((m) => ({ default: m.HierarchyPage })));
 const InvitationsPage = lazy(() => import('@/modules/organization/InvitationsPage').then((m) => ({ default: m.InvitationsPage })));
 const SchoolDashboardPage = lazy(() => import('@/modules/organization/SchoolDashboardPage').then((m) => ({ default: m.SchoolDashboardPage })));
@@ -96,6 +100,10 @@ export const router = createBrowserRouter([
             element: <AppLayout variant="school" />,
             children: [
               { index: true, element: <SchoolDashboardPage /> },
+              { path: 'academics', element: org('classes.read', <AcademicsOverviewPage />) },
+              { path: 'academics/years', element: org('academic_years.read', <AcademicYearsPage />) },
+              { path: 'academics/classes', element: org('classes.read', <ClassesPage />) },
+              { path: 'academics/classes/:id', element: org('classes.read', <ClassDetailPage />) },
               { path: 'users', element: org('users.read', <UsersPage />) },
               { path: 'users/:id', element: org('users.read', <UserDetailPage />) },
               { path: 'roles', element: org('roles.read', <RolesListPage key="organization" level="organization" />) },

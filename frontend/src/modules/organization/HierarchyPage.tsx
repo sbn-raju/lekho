@@ -1,4 +1,6 @@
 import {
+  Alert,
+  Anchor,
   Badge,
   Button,
   Card,
@@ -22,8 +24,9 @@ import {
   type TreeNodeData,
 } from '@mantine/core';
 import { hasLength, matches, useForm } from '@mantine/form';
-import { IconChevronDown, IconChevronRight, IconCrown, IconDots, IconHierarchy2, IconPlus, IconUserPlus } from '@tabler/icons-react';
+import { IconChevronDown, IconChevronRight, IconCrown, IconDots, IconHierarchy2, IconLock, IconPlus, IconUserPlus } from '@tabler/icons-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Link } from 'react-router';
 import { EntityStatus } from '@/components/EntityStatus';
 import { PageHeader } from '@/components/PageHeader';
 import { confirmAction, notifyError, notifySuccess } from '@/components/feedback/feedback';
@@ -132,7 +135,7 @@ function MoveModal({ unit, units, onClose }: { unit: UnitDetail; units: Organiza
   const [parentId, setParentId] = useState<string | null>(unit.parentId ?? 'root');
   const move = useSchoolMutation((p: string | null) => schoolApi.updateUnit(unit.id, { parentId: p }));
   // Not itself or anything inside it; sections can't hold units.
-  const options = unitOptions(units, (u) => u.id !== unit.id && !u.ancestorIds.includes(unit.id) && u.type !== 'section');
+  const options = unitOptions(units, (u) => u.id !== unit.id && !u.ancestorIds.includes(unit.id) && u.type !== 'section' && !u.managedBy);
   return (
     <Modal opened onClose={onClose} title={`Move ${unit.name}`}>
       <Stack gap="md">
@@ -182,6 +185,8 @@ function UnitPanel({ id, units, onDeleted, onCreated }: { id: string; units: Org
   const u = unit.data;
   const canUpdate = access.canOrg('organization_units.update');
   const canAssign = access.canOrg('organization_units.assign');
+  // Class and section units follow their class/section; only members are managed here.
+  const managed = u.managedBy === 'academics';
 
   const del = () =>
     confirmAction({
@@ -231,12 +236,12 @@ function UnitPanel({ id, units, onDeleted, onCreated }: { id: string; units: Org
             </Text>
           </Stack>
           <Group gap="xs">
-            {access.canOrg('organization_units.create') && u.type !== 'section' && (
+            {access.canOrg('organization_units.create') && u.type !== 'section' && !managed && (
               <Button size="xs" variant="default" leftSection={<IconPlus size={14} />} onClick={() => setModal('child')}>
                 Add inside
               </Button>
             )}
-            {(canUpdate || access.canOrg('organization_units.delete')) && (
+            {!managed && (canUpdate || access.canOrg('organization_units.delete')) && (
               <Menu position="bottom-end" shadow="md">
                 <Menu.Target>
                   <Button size="xs" variant="default" aria-label="Unit actions">
@@ -278,6 +283,15 @@ function UnitPanel({ id, units, onDeleted, onCreated }: { id: string; units: Org
             )}
           </Group>
         </Group>
+        {managed && (
+          <Alert color="info" variant="light" icon={<IconLock size={18} />} mt="md" p="sm">
+            This {u.type} is managed from{' '}
+            <Anchor component={Link} to="/academics/classes" size="sm">
+              Classes & sections
+            </Anchor>
+            . Rename, deactivate or delete it there; you can still place people in it here.
+          </Alert>
+        )}
       </Card>
 
       {canAssign && u.status === 'active' && (

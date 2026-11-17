@@ -1,6 +1,8 @@
 import {
   IconBook,
   IconBuildingCommunity,
+  IconCalendarStats,
+  IconChalkboard,
   IconCalendarCheck,
   IconChartBar,
   IconChecklist,
@@ -9,6 +11,7 @@ import {
   IconHistory,
   IconHome,
   IconKey,
+  IconLayoutGrid,
   IconMailForward,
   IconReceipt,
   IconSchool,
@@ -28,6 +31,8 @@ export interface NavItem {
   icon: Icon;
   /** Hide unless the user holds this permission (UI hint only; the API enforces it). */
   permission?: string;
+  /** Highlight only on this exact path, not its sub-pages (for section landing pages). */
+  exact?: boolean;
 }
 
 export interface NavSection {
@@ -53,6 +58,14 @@ const placeholder = (path: string) => MODULE_PLACEHOLDERS.find((i) => i.path ===
 /** School Administration Console (FRD §14.2) plus the school modules. */
 export const SCHOOL_NAV: NavSection[] = [
   { items: [{ label: 'Dashboard', path: '/', icon: IconHome }] },
+  {
+    title: 'Academics',
+    items: [
+      { label: 'Academic setup', path: '/academics', icon: IconLayoutGrid, permission: 'classes.read', exact: true },
+      { label: 'Classes & sections', path: '/academics/classes', icon: IconChalkboard, permission: 'classes.read' },
+      { label: 'Academic years', path: '/academics/years', icon: IconCalendarStats, permission: 'academic_years.read' },
+    ],
+  },
   { title: 'School', items: ['/students', '/attendance', '/fees', '/exams'].map(placeholder) },
   { title: 'Learning', items: ['/lms', '/courses', '/assignments'].map(placeholder) },
   { title: 'Communication', items: ['/announcements', '/reports'].map(placeholder) },

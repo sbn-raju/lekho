@@ -8,6 +8,8 @@ import '@fontsource-variable/inter';
 // Mantine styles — core first, then the packages used at the app root.
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css';
+import '@mantine/charts/styles.css';
 
 import './styles/global.css';
 import App from './App';

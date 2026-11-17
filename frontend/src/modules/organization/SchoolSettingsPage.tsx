@@ -1,6 +1,7 @@
-import { Button, Card, Grid, Group, NumberInput, Select, SimpleGrid, Skeleton, Stack, TextInput, Title } from '@mantine/core';
+import { Anchor, Button, Card, Grid, Group, NumberInput, Select, SimpleGrid, Skeleton, Stack, Text, TextInput, Title } from '@mantine/core';
 import { isEmail, useForm } from '@mantine/form';
 import { useEffect } from 'react';
+import { Link } from 'react-router';
 import { PageHeader } from '@/components/PageHeader';
 import { notifyError, notifySuccess } from '@/components/feedback/feedback';
 import { QueryError } from '@/components/feedback/QueryState';
@@ -22,7 +23,7 @@ export function SchoolSettingsPage() {
   const canEdit = access.canOrg('settings.update');
   const form = useForm({
     mode: 'uncontrolled',
-    initialValues: { name: '', email: '', phone: '', line1: '', city: '', state: '', country: '', postalCode: '', timezone: 'Asia/Kolkata', academicYear: '', hierarchyMaxDepth: 6 },
+    initialValues: { name: '', email: '', phone: '', line1: '', city: '', state: '', country: '', postalCode: '', timezone: 'Asia/Kolkata', hierarchyMaxDepth: 6 },
     validate: { email: isEmail('Enter a valid email address') },
   });
 
@@ -33,7 +34,7 @@ export function SchoolSettingsPage() {
       contact: { email: v.email, phone: v.phone || undefined },
       address: { line1: v.line1 || undefined, city: v.city || undefined, state: v.state || undefined, country: v.country || undefined, postalCode: v.postalCode || undefined },
     });
-    await schoolApi.updateSettings(id, { timezone: v.timezone, academicYear: v.academicYear || undefined, hierarchyMaxDepth: v.hierarchyMaxDepth });
+    await schoolApi.updateSettings(id, { timezone: v.timezone, hierarchyMaxDepth: v.hierarchyMaxDepth });
   });
 
   useEffect(() => {
@@ -49,7 +50,6 @@ export function SchoolSettingsPage() {
       country: s.address.country ?? '',
       postalCode: s.address.postalCode ?? '',
       timezone: s.settings.timezone,
-      academicYear: s.settings.academicYear ?? '',
       hierarchyMaxDepth: s.settings.hierarchyMaxDepth ?? 6,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps -- initialize once data arrives
@@ -100,7 +100,20 @@ export function SchoolSettingsPage() {
               </Title>
               <Stack gap="md">
                 <Select label="Timezone" data={TIMEZONES} searchable allowDeselect={false} disabled={!canEdit} key={form.key('timezone')} {...form.getInputProps('timezone')} />
-                <TextInput label="Academic year" placeholder="2026-27" disabled={!canEdit} key={form.key('academicYear')} {...form.getInputProps('academicYear')} />
+                {/* Follows the current academic year; set it from Academic years. */}
+                <Stack gap={2}>
+                  <Text size="sm" fw={500}>
+                    Current academic year
+                  </Text>
+                  <Group gap="xs">
+                    <Text>{school.data.settings.academicYear ?? 'Not set'}</Text>
+                    {access.canOrg('academic_years.read') && (
+                      <Anchor component={Link} to="/academics/years" size="sm">
+                        Manage academic years
+                      </Anchor>
+                    )}
+                  </Group>
+                </Stack>
                 <NumberInput
                   label="Hierarchy depth limit"
                   description="Maximum levels of departments, classes and sections."

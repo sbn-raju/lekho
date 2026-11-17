@@ -14,8 +14,8 @@ import { useActiveOrganizationId } from '@/services/auth/organization-context';
 import { fullName, initials } from '@/utils/format';
 import classes from './AppLayout.module.css';
 
-function isActive(pathname: string, path: string, root: string) {
-  return path === root ? pathname === root : pathname === path || pathname.startsWith(`${path}/`);
+function isActive(pathname: string, path: string, root: string, exact?: boolean) {
+  return path === root || exact ? pathname === path : pathname === path || pathname.startsWith(`${path}/`);
 }
 
 function SidebarLink({ item, root, onNavigate }: { item: NavItem; root: string; onNavigate: () => void }) {
@@ -27,7 +27,7 @@ function SidebarLink({ item, root, onNavigate }: { item: NavItem; root: string; 
       to={item.path}
       label={item.label}
       leftSection={<Icon size={20} stroke={1.75} />}
-      active={isActive(pathname, item.path, root)}
+      active={isActive(pathname, item.path, root, item.exact)}
       onClick={onNavigate}
       className={classes.link}
     />

@@ -67,6 +67,19 @@ export const PERMISSION_CATALOG: readonly PermissionDefinition[] = [
   org('organization_units.delete', 'Delete units', 'organization_units', 'Delete empty units.', 'organization_unit'),
   org('organization_units.assign', 'Assign unit members', 'organization_units', 'Add and remove unit members and department heads.', 'organization_unit'),
 
+  // ----- Organization: academic structure -----
+  org('academic_years.read', 'View academic years', 'academics', 'View academic years, their terms and which year is current.'),
+  org('academic_years.create', 'Create academic years', 'academics', 'Create academic years.'),
+  org('academic_years.update', 'Edit academic years', 'academics', 'Edit dates and terms; activate, close, reopen and archive academic years.'),
+  org('academic_years.delete', 'Delete academic years', 'academics', 'Delete academic years that are not current and not in use.'),
+  org('classes.read', 'View classes & sections', 'academics', 'View classes, their sections and configured strength.'),
+  org('classes.create', 'Create classes', 'academics', 'Create classes, one at a time or from a template.'),
+  org('classes.update', 'Edit classes', 'academics', 'Rename and reorder classes, set default section strength, activate or deactivate them.'),
+  org('classes.delete', 'Delete classes', 'academics', 'Delete classes that have no sections.'),
+  org('sections.create', 'Create sections', 'academics', 'Add sections to classes, in bulk, or by copying another academic year.'),
+  org('sections.update', 'Edit sections', 'academics', 'Change section strength, room, class teacher and status (scoped by class or section).', 'section'),
+  org('sections.delete', 'Delete sections', 'academics', 'Delete sections with nobody placed in them.'),
+
   // ----- Organization: school settings & audit -----
   org('settings.update', 'Edit school settings', 'settings', 'Edit the school profile and settings.'),
   org('audit_logs.read', 'View audit logs', 'audit_logs', "View the school's audit trail."),
@@ -103,6 +116,7 @@ export const PERMISSION_MODULES: Record<PermissionLevel, { code: string; name: s
     { code: 'users', name: 'Users & invitations' },
     { code: 'roles', name: 'Roles & permissions' },
     { code: 'organization_units', name: 'Departments & hierarchy' },
+    { code: 'academics', name: 'Academic structure' },
     { code: 'settings', name: 'School settings' },
     { code: 'audit_logs', name: 'Audit logs' },
   ],

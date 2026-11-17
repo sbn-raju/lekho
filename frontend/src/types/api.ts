@@ -216,6 +216,8 @@ export interface OrganizationUnit {
   depth: number;
   headUserIds: string[];
   status: 'active' | 'inactive';
+  /** Set when another module owns the unit ('academics' for classes and sections). */
+  managedBy: 'academics' | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -283,4 +285,107 @@ export interface PlatformDashboard {
   pendingOnboarding: number;
   totalUsers: number;
   platformStaff: number;
+}
+
+// ---------- Academic structure (backend/src/modules/academics) ----------
+
+export type AcademicYearStatus = 'planned' | 'active' | 'completed' | 'archived';
+
+export interface AcademicTerm {
+  id: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface AcademicYear {
+  id: string;
+  organizationId: string;
+  name: string;
+  code: string;
+  /** YYYY-MM-DD */
+  startDate: string;
+  endDate: string;
+  status: AcademicYearStatus;
+  isCurrent: boolean;
+  terms: AcademicTerm[];
+  activatedAt: string | null;
+  completedAt: string | null;
+  sectionCount: number;
+  classCount: number;
+  totalCapacity: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface YearRef {
+  id: string;
+  name: string;
+  status: AcademicYearStatus;
+}
+
+export interface SchoolClass {
+  id: string;
+  organizationId: string;
+  name: string;
+  code: string;
+  description: string | null;
+  displayOrder: number;
+  defaultSectionCapacity: number;
+  status: 'active' | 'inactive';
+  unitId: string;
+  /** For the year the list was asked for (or the current year). Active sections only. */
+  sectionCount: number;
+  totalCapacity: number;
+  sectionsWithoutClassTeacher: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Section {
+  id: string;
+  organizationId: string;
+  academicYearId: string;
+  classId: string;
+  name: string;
+  code: string;
+  capacity: number;
+  room: string | null;
+  classTeacherUserId: string | null;
+  displayOrder: number;
+  status: 'active' | 'inactive';
+  unitId: string;
+  class: { id: string; name: string; code: string; status: 'active' | 'inactive' } | null;
+  classTeacher: { id: string; name: string; email: string } | null;
+  /** People placed in the section's hierarchy unit (class teacher included). */
+  memberCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ClassList {
+  academicYear: YearRef | null;
+  items: SchoolClass[];
+}
+
+export interface ClassDetail extends SchoolClass {
+  academicYear: YearRef | null;
+  sections: Section[];
+  totalSectionsAllYears: number;
+}
+
+export interface AcademicsOverview {
+  academicYear: (YearRef & { startDate: string; endDate: string; termCount: number }) | null;
+  years: Record<AcademicYearStatus | 'total', number>;
+  totals: {
+    classes: number;
+    activeClasses: number;
+    sections: number;
+    totalCapacity: number;
+    averageSectionCapacity: number;
+    sectionsWithoutClassTeacher: number;
+    classesWithoutSections: number;
+  };
+  byClass: { classId: string; name: string; code: string; sectionCount: number; totalCapacity: number; sectionsWithoutClassTeacher: number }[];
+  checklist: { key: 'academic_year' | 'current_year' | 'classes' | 'sections' | 'class_teachers'; label: string; done: boolean }[];
 }
