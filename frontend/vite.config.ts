@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
       // Forward API calls to the Express backend during development (no CORS needed).
       proxy: {
         '/api': {
-          target: env.VITE_API_PROXY_TARGET || 'http://localhost:5000',
+          target: env.VITE_API_PROXY_TARGET || 'http://localhost:5050',
           changeOrigin: true,
         },
       },

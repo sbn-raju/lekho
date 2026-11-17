@@ -1,5 +1,7 @@
 import { Box, Center, Stack, Text, Title } from '@mantine/core';
+import { Suspense } from 'react';
 import { Outlet } from 'react-router';
+import { PageLoader } from '@/components/feedback/QueryState';
 import { brandCopy } from '@/brand';
 import { Logo } from '@/components/brand/Logo';
 import classes from './AuthLayout.module.css';
@@ -25,7 +27,9 @@ export function AuthLayout() {
 
       <Center className={classes.formPanel}>
         <Box w="100%" maw={400}>
-          <Outlet />
+          <Suspense fallback={<PageLoader />}>
+            <Outlet />
+          </Suspense>
         </Box>
       </Center>
     </Box>
