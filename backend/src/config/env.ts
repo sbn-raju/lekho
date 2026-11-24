@@ -48,11 +48,50 @@ const envSchema = z
     /** e.g. smtps://user:pass@smtp.example.com:465. Required in production. */
     SMTP_URL: z.string().optional(),
     MAIL_FROM: z.string().default('Lekho <no-reply@lekho.com>'),
+
+    // --- SMS (guardian OTP) ---
+    /** `console` prints messages (development only); `twilio` sends through Twilio's REST API. */
+    SMS_PROVIDER: z.enum(['console', 'twilio']).default('console'),
+    TWILIO_ACCOUNT_SID: z.string().optional(),
+    TWILIO_AUTH_TOKEN: z.string().optional(),
+    /** Sender number (E.164) or Messaging Service SID (MG…). */
+    TWILIO_FROM: z.string().optional(),
+    /** Country calling code assumed for local numbers without one, e.g. 91 for India. */
+    DEFAULT_PHONE_COUNTRY_CODE: z.string().regex(/^\d{1,3}$/).default('91'),
+
+    // --- Guardian mobile OTP (Student FRD §4.3) ---
+    /** Pepper for OTP hashes (HMAC-SHA256). Required in production. */
+    OTP_SECRET: z.string().min(32).optional(),
+    OTP_LENGTH: z.coerce.number().int().min(4).max(8).default(6),
+    OTP_TTL_SECONDS: z.coerce.number().int().min(60).max(1800).default(300),
+    OTP_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(10).default(5),
+    OTP_RESEND_COOLDOWN_SECONDS: z.coerce.number().int().min(0).max(600).default(45),
+    /** OTPs one school may send to one mobile number in 24 hours. */
+    OTP_MAX_REQUESTS_PER_DAY: z.coerce.number().int().min(1).max(100).default(10),
+
+    // --- ImageKit (student photographs) ---
+    IMAGEKIT_PUBLIC_KEY: z.string().optional(),
+    IMAGEKIT_PRIVATE_KEY: z.string().optional(),
+    /** e.g. https://ik.imagekit.io/your_id */
+    IMAGEKIT_URL_ENDPOINT: z.url().optional(),
+    /** Root folder; photos go to <root>/<organizationId>/students/<studentId>. */
+    IMAGEKIT_ROOT_FOLDER: z.string().regex(/^\/[A-Za-z0-9_\-/]*$/).default('/lekho'),
+    /** Lifetime of signed photo URLs. */
+    IMAGEKIT_SIGNED_URL_TTL_SECONDS: z.coerce.number().int().min(60).max(86_400).default(3600),
+    /** What happens to a replaced or removed photo: `delete` it from ImageKit, or `retain` it. */
+    STUDENT_PHOTO_RETENTION: z.enum(['delete', 'retain']).default('delete'),
   })
   .superRefine((cfg, ctx) => {
+    if (cfg.SMS_PROVIDER === 'twilio' && !(cfg.TWILIO_ACCOUNT_SID && cfg.TWILIO_AUTH_TOKEN && cfg.TWILIO_FROM)) {
+      ctx.addIssue({ code: 'custom', path: ['TWILIO_ACCOUNT_SID'], message: 'TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN and TWILIO_FROM are required for SMS_PROVIDER=twilio' });
+    }
+    const ik = [cfg.IMAGEKIT_PUBLIC_KEY, cfg.IMAGEKIT_PRIVATE_KEY, cfg.IMAGEKIT_URL_ENDPOINT].filter(Boolean).length;
+    if (ik !== 0 && ik !== 3) ctx.addIssue({ code: 'custom', path: ['IMAGEKIT_PRIVATE_KEY'], message: 'Set all of IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY and IMAGEKIT_URL_ENDPOINT, or none' });
     if (cfg.NODE_ENV !== 'production') return;
     if (!cfg.JWT_PRIVATE_KEY) ctx.addIssue({ code: 'custom', path: ['JWT_PRIVATE_KEY'], message: 'Required in production' });
     if (!cfg.SMTP_URL) ctx.addIssue({ code: 'custom', path: ['SMTP_URL'], message: 'Required in production' });
+    if (!cfg.OTP_SECRET) ctx.addIssue({ code: 'custom', path: ['OTP_SECRET'], message: 'Required in production' });
+    if (cfg.SMS_PROVIDER === 'console') ctx.addIssue({ code: 'custom', path: ['SMS_PROVIDER'], message: 'console cannot be used in production' });
     if (cfg.COOKIE_SECURE === false)
       ctx.addIssue({ code: 'custom', path: ['COOKIE_SECURE'], message: 'Cannot be disabled in production' });
   });

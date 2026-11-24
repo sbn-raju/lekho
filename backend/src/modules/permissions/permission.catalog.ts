@@ -80,6 +80,20 @@ export const PERMISSION_CATALOG: readonly PermissionDefinition[] = [
   org('sections.update', 'Edit sections', 'academics', 'Change section strength, room, class teacher and status (scoped by class or section).', 'section'),
   org('sections.delete', 'Delete sections', 'academics', 'Delete sections with nobody placed in them.'),
 
+  // ----- Organization: students (Student FRD §2, §16) -----
+  // Read permissions are scoped by the student's current section, so a teacher role granted with
+  // "assigned" or section/class scope sees only students placed in those sections.
+  org('students.read', 'View students', 'students', 'View student records, photographs, admission numbers and class placement (scoped by class or section).', 'student'),
+  org('students.read_sensitive', 'View sensitive student data', 'students', 'View religion, caste and medical notes. Every view is audited (scoped by class or section).', 'student'),
+  org('students.create', 'Register students', 'students', 'Start student registrations (drafts) and complete them, which issues the admission number.'),
+  org('students.update', 'Edit students', 'students', 'Edit student details, upload and replace photographs, and change student status.'),
+  org('students.delete', 'Delete or archive students', 'students', 'Delete draft registrations and archive or restore registered students.'),
+  org('guardians.read', 'View parents & guardians', 'students', "View students' parent and guardian contact details (scoped by class or section).", 'student'),
+  org('guardians.manage', 'Manage parents & guardians', 'students', 'Add, edit and remove parents and guardians, and verify their mobile numbers by OTP.'),
+  org('student_assignments.manage', 'Assign classes', 'students', 'Place students in a class and section for an academic year, transfer, correct and close placements.'),
+  org('student_id_cards.generate', 'Generate ID cards', 'students', 'Generate and download student ID cards, one at a time or in bulk (scoped by class or section).', 'student'),
+  org('students.configure', 'Configure student records', 'students', 'Set the admission number format, manage ID card templates and correct admission numbers.'),
+
   // ----- Organization: school settings & audit -----
   org('settings.update', 'Edit school settings', 'settings', 'Edit the school profile and settings.'),
   org('audit_logs.read', 'View audit logs', 'audit_logs', "View the school's audit trail."),
@@ -117,6 +131,7 @@ export const PERMISSION_MODULES: Record<PermissionLevel, { code: string; name: s
     { code: 'roles', name: 'Roles & permissions' },
     { code: 'organization_units', name: 'Departments & hierarchy' },
     { code: 'academics', name: 'Academic structure' },
+    { code: 'students', name: 'Students' },
     { code: 'settings', name: 'School settings' },
     { code: 'audit_logs', name: 'Audit logs' },
   ],

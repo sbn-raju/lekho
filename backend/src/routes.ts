@@ -11,6 +11,7 @@ import permissionRoutes from './modules/permissions/permission.routes.js';
 import auditRoutes from './modules/audit/audit.routes.js';
 import { authorizationRouter } from './modules/authorization/authorization.routes.js';
 import organizationUnitRoutes from './modules/organization-units/organization-unit.routes.js';
+import { idCardTemplateRouter, studentRouter, studentSettingsRouter, uploadRouter, yearStudentsRouter } from './modules/students/students.routes.js';
 import { academicYearRouter, academicsRouter, classRouter, sectionRouter } from './modules/academics/academics.routes.js';
 
 const router = Router();
@@ -28,9 +29,14 @@ router.use('/permissions', permissionRoutes);
 router.use('/authorization', authorizationRouter);
 router.use('/audit-logs', auditRoutes);
 router.use('/organization-units', organizationUnitRoutes);
+router.use('/academic-years/:yearId/students', yearStudentsRouter);
 router.use('/academic-years', academicYearRouter);
 router.use('/classes', classRouter);
 router.use('/sections', sectionRouter);
 router.use('/academics', academicsRouter);
+router.use('/students', studentRouter);
+router.use('/uploads', uploadRouter);
+router.use('/settings', studentSettingsRouter);
+router.use('/id-card-templates', idCardTemplateRouter);
 
 export default router;

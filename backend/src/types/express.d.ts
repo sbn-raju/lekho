@@ -3,6 +3,8 @@ import type { Grants } from '../modules/authorization/authorization.service.js';
 declare global {
   namespace Express {
     interface Request {
+      /** Correlation ID: the caller's X-Request-Id when well-formed, else generated. */
+      requestId?: string;
       /** Set by the `authenticate` middleware once the access token, user and session are validated. */
       auth?: {
         userId: string;

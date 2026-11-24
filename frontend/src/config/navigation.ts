@@ -1,5 +1,8 @@
 import {
+  IconAdjustments,
   IconBook,
+  IconChalkboardTeacher,
+  IconId,
   IconBuildingCommunity,
   IconCalendarStats,
   IconChalkboard,
@@ -42,7 +45,6 @@ export interface NavSection {
 
 /** Domain modules that don't have screens yet; they render a placeholder page. */
 export const MODULE_PLACEHOLDERS: NavItem[] = [
-  { label: 'Students', path: '/students', icon: IconUsers },
   { label: 'Attendance', path: '/attendance', icon: IconCalendarCheck },
   { label: 'Fees', path: '/fees', icon: IconReceipt },
   { label: 'Exams', path: '/exams', icon: IconClipboardList },
@@ -66,7 +68,16 @@ export const SCHOOL_NAV: NavSection[] = [
       { label: 'Academic years', path: '/academics/years', icon: IconCalendarStats, permission: 'academic_years.read' },
     ],
   },
-  { title: 'School', items: ['/students', '/attendance', '/fees', '/exams'].map(placeholder) },
+  {
+    title: 'Students',
+    items: [
+      { label: 'Students', path: '/students', icon: IconUsers, permission: 'students.read', exact: true },
+      { label: 'My classes', path: '/students/my-classes', icon: IconChalkboardTeacher, permission: 'students.read' },
+      { label: 'ID cards', path: '/students/id-cards', icon: IconId, permission: 'student_id_cards.generate' },
+      { label: 'Admission settings', path: '/students/settings', icon: IconAdjustments, permission: 'students.configure' },
+    ],
+  },
+  { title: 'School', items: ['/attendance', '/fees', '/exams'].map(placeholder) },
   { title: 'Learning', items: ['/lms', '/courses', '/assignments'].map(placeholder) },
   { title: 'Communication', items: ['/announcements', '/reports'].map(placeholder) },
   {

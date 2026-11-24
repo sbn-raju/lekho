@@ -35,6 +35,12 @@ const AccountSecurityPage = lazy(() => import('@/modules/profile/AccountSecurity
 const AuditLogPage = lazy(() => import('@/modules/shared/audit/AuditLogPage').then((m) => ({ default: m.AuditLogPage })));
 const RoleDetailPage = lazy(() => import('@/modules/shared/roles/RoleDetailPage').then((m) => ({ default: m.RoleDetailPage })));
 const RolesListPage = lazy(() => import('@/modules/shared/roles/RolesListPage').then((m) => ({ default: m.RolesListPage })));
+const StudentsPage = lazy(() => import('@/modules/students/StudentsPage').then((m) => ({ default: m.StudentsPage })));
+const RegisterStudentPage = lazy(() => import('@/modules/students/RegisterStudentPage').then((m) => ({ default: m.RegisterStudentPage })));
+const StudentProfilePage = lazy(() => import('@/modules/students/StudentProfilePage').then((m) => ({ default: m.StudentProfilePage })));
+const BulkIdCardsPage = lazy(() => import('@/modules/students/BulkIdCardsPage').then((m) => ({ default: m.BulkIdCardsPage })));
+const StudentSettingsPage = lazy(() => import('@/modules/students/StudentSettingsPage').then((m) => ({ default: m.StudentSettingsPage })));
+const MyClassesPage = lazy(() => import('@/modules/students/MyClassesPage').then((m) => ({ default: m.MyClassesPage })));
 const BrandPage = lazy(() => import('@/pages/BrandPage').then((m) => ({ default: m.BrandPage })));
 
 // Pages are code-split per route; layouts render them inside <Suspense>.
@@ -104,6 +110,13 @@ export const router = createBrowserRouter([
               { path: 'academics/years', element: org('academic_years.read', <AcademicYearsPage />) },
               { path: 'academics/classes', element: org('classes.read', <ClassesPage />) },
               { path: 'academics/classes/:id', element: org('classes.read', <ClassDetailPage />) },
+              { path: 'students', element: org('students.read', <StudentsPage />) },
+              { path: 'students/new', element: org('students.create', <RegisterStudentPage />) },
+              { path: 'students/my-classes', element: org('students.read', <MyClassesPage />) },
+              { path: 'students/id-cards', element: org('student_id_cards.generate', <BulkIdCardsPage />) },
+              { path: 'students/settings', element: org('students.configure', <StudentSettingsPage />) },
+              { path: 'students/:id', element: org('students.read', <StudentProfilePage />) },
+              { path: 'students/:id/register', element: org('students.create', <RegisterStudentPage key="register" />) },
               { path: 'users', element: org('users.read', <UsersPage />) },
               { path: 'users/:id', element: org('users.read', <UserDetailPage />) },
               { path: 'roles', element: org('roles.read', <RolesListPage key="organization" level="organization" />) },

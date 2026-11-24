@@ -31,6 +31,13 @@ const MAP: Record<string, [StatusKey, string?]> = {
   retrying: ['late', 'Retrying'],
   sent: ['completed', 'Sent'],
   failed: ['failed'],
+  // Students
+  transferred: ['inactive', 'Transferred'],
+  withdrawn: ['cancelled', 'Withdrawn'],
+  graduated: ['completed', 'Graduated'],
+  verified: ['completed', 'Verified'],
+  unverified: ['pending', 'Unverified'],
+  superseded: ['inactive', 'Transferred out'],
 };
 
 export function EntityStatus({ status, size = 'md' }: { status: string; size?: 'sm' | 'md' | 'lg' }) {

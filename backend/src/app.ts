@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -14,6 +15,13 @@ export function createApp() {
   app.set('trust proxy', trustProxySetting());
   app.disable('x-powered-by');
 
+  // Correlation ID for logs and audit records; echo a well-formed caller ID, else make one.
+  app.use((req, res, next) => {
+    const incoming = req.get('x-request-id');
+    req.requestId = incoming && /^[A-Za-z0-9._:-]{8,128}$/.test(incoming) ? incoming : randomUUID();
+    res.set('X-Request-Id', req.requestId);
+    next();
+  });
   app.use(helmet());
   // Cookie auth needs an explicit origin list; '*' disables credentialed CORS.
   app.use(cors({ origin: env.CORS_ORIGIN === '*' ? '*' : env.CORS_ORIGIN.split(','), credentials: env.CORS_ORIGIN !== '*' }));

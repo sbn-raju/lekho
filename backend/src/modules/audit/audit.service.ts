@@ -24,7 +24,7 @@ export const auditService = {
    */
   async record(entry: AuditEntry, session?: ClientSession): Promise<void> {
     const { meta, ...rest } = entry;
-    const doc = { ...rest, ipAddress: meta?.ipAddress, userAgent: meta?.userAgent };
+    const doc = { ...rest, ipAddress: meta?.ipAddress, userAgent: meta?.userAgent, requestId: meta?.requestId };
     if (session) {
       await AuditLogModel.create([doc], { session });
       return;

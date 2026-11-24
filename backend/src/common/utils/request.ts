@@ -4,11 +4,13 @@ import { ApiError } from '../errors/ApiError.js';
 export interface RequestMeta {
   ipAddress?: string;
   userAgent?: string;
+  /** Correlation ID for the request (X-Request-Id), recorded on audit entries. */
+  requestId?: string;
 }
 
 export function requestMeta(req: Request): RequestMeta {
   const ua = req.get('user-agent');
-  return { ipAddress: req.ip, userAgent: ua ? ua.slice(0, 512) : undefined };
+  return { ipAddress: req.ip, userAgent: ua ? ua.slice(0, 512) : undefined, requestId: req.requestId };
 }
 
 /** Returns the authenticated principal, or throws if the route was mounted without `authenticate`. */

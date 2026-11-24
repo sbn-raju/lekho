@@ -32,6 +32,7 @@ function toPublicAudit(l: Record<string, unknown> & { _id: unknown }) {
     metadata: l.metadata ?? null,
     ipAddress: l.ipAddress ?? null,
     userAgent: l.userAgent ?? null,
+    requestId: l.requestId ?? null,
     createdAt: l.createdAt,
   };
 }

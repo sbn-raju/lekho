@@ -201,6 +201,19 @@ export const api = {
     a.click();
     URL.revokeObjectURL(url);
   },
+
+  /** POSTs and saves the file response (e.g. a generated PDF), named by Content-Disposition when given. */
+  async downloadPost(path: string, body: unknown, fallbackName: string): Promise<Headers> {
+    let res = await send(path, { method: 'POST', body });
+    if (res.status === 401 && (await refreshSession())) res = await send(path, { method: 'POST', body });
+    if (!res.ok) throw await toError(res);
+    const name = res.headers.get('Content-Disposition')?.match(/filename="([^"]+)"/)?.[1] ?? fallbackName;
+    const url = URL.createObjectURL(await res.blob());
+    const a = Object.assign(document.createElement('a'), { href: url, download: name });
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return res.headers;
+  },
 };
 
 /** Builds a query string, skipping empty values. */
